@@ -123,5 +123,4 @@ rm -f $mungekey
 
 # Restart slurm service on all nodes
 
-./$TEMPLATE_BASE/install-singularity.sh
 exit 0
