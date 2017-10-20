@@ -30,11 +30,6 @@ ADMIN_USERNAME=$7
 ADMIN_PASSWORD=$8
 TEMPLATE_BASE=$9
 
-if [[ `which sinfo &>/dev/null; echo $?` -eq 0 ]]
-then
-  exit 0
-fi
-
 # Update master node
 echo $MASTER_IP $MASTER_NAME >> /etc/hosts
 echo $MASTER_IP $MASTER_NAME > /tmp/hosts.$$
@@ -132,7 +127,8 @@ if [[ `which singularity &>/dev/null; echo $?` -eq 0 ]]
 then
   echo 'installed'
 else
-  ./$TEMPLATE_BASE/install-singularity.sh
+  wget $TEMPLATE_BASE/install-singularity.sh
+  ./install-singularity.sh
 fi
 
 exit 0
