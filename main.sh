@@ -106,7 +106,7 @@ do
    sudo -u $ADMIN_USERNAME scp $mungekey $ADMIN_USERNAME@$worker:/tmp/munge.key >> /tmp/azuredeploy.log.$$ 2>&1
    sudo -u $ADMIN_USERNAME scp $SLURMCONF $ADMIN_USERNAME@$worker:/tmp/slurm.conf >> /tmp/azuredeploy.log.$$ 2>&1
    sudo -u $ADMIN_USERNAME scp /tmp/hosts.$$ $ADMIN_USERNAME@$worker:/tmp/hosts >> /tmp/azuredeploy.log.$$ 2>&1
-   sudo -u $ADMIN_USERNAME scp /opt/install-singularity.sh $ADMIN_USERNAME@$worker:/opt/install-singularity.sh >> /tmp/azuredeploy.log.$$ 2>&1
+   sudo scp /opt/install-singularity.sh $ADMIN_USERNAME@$worker:/opt/install-singularity.sh >> /tmp/azuredeploy.log.$$ 2>&1
 
    echo "Remote execute on $worker" >> /tmp/azuredeploy.log.$$ 2>&1
    sudo -u $ADMIN_USERNAME ssh $ADMIN_USERNAME@$worker >> /tmp/azuredeploy.log.$$ 2>&1 << 'ENDSSH1'
