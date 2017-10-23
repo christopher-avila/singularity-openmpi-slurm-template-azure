@@ -80,6 +80,8 @@ sudo chmod o+w /var/spool # Write access for slurmctld log. Consider switch log 
 sudo -u slurm /usr/sbin/slurmctld >> /tmp/azuredeploy.log.$$ 2>&1 # Start the master daemon service
 sudo munged --force >> /tmp/azuredeploy.log.$$ 2>&1 # Start munged
 sudo slurmd >> /tmp/azuredeploy.log.$$ 2>&1 # Start the node
+wget $TEMPLATE_BASE/install-singularity.sh
+./install-singularity.sh
 
 # Install slurm on all nodes by running apt-get
 # Also push munge key and slurm.conf to them
@@ -115,6 +117,8 @@ do
       sudo cp -f /tmp/slurm.conf /etc/slurm-llnl/slurm.conf
       sudo chown slurm /etc/slurm-llnl/slurm.conf
       sudo slurmd
+      wget $TEMPLATE_BASE/install-singularity.sh
+      ./install-singularity.sh
 ENDSSH1
 
    i=`expr $i + 1`
@@ -122,13 +126,5 @@ done
 rm -f $mungekey
 
 # Restart slurm service on all nodes
-
-if [[ `which singularity &>/dev/null; echo $?` -eq 0 ]]
-then
-  echo 'installed'
-else
-  wget $TEMPLATE_BASE/install-singularity.sh
-  ./install-singularity.sh
-fi
 
 exit 0
