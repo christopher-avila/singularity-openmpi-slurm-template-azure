@@ -87,6 +87,12 @@ sudo chmod +x install-singularity.sh
 ./install-singularity.sh
 sudo mv install-singularity.sh /opt/
 
+#install openmpi
+wget $TEMPLATE_BASE/install-openmpi.sh
+sudo chmod +x install-openmpi.sh
+./install-openmpi.sh
+sudo mv install-openmpi.sh /opt/
+
 # Install slurm on all nodes by running apt-get
 # Also push munge key and slurm.conf to them
 echo "Prepare the local copy of munge key" >> /tmp/azuredeploy.log.$$ 2>&1
@@ -107,6 +113,7 @@ do
    sudo -u $ADMIN_USERNAME scp $SLURMCONF $ADMIN_USERNAME@$worker:/tmp/slurm.conf >> /tmp/azuredeploy.log.$$ 2>&1
    sudo -u $ADMIN_USERNAME scp /tmp/hosts.$$ $ADMIN_USERNAME@$worker:/tmp/hosts >> /tmp/azuredeploy.log.$$ 2>&1
    sudo -u $ADMIN_USERNAME scp /opt/install-singularity.sh $ADMIN_USERNAME@$worker:/tmp/install-singularity.sh >> /tmp/azuredeploy.log.$$ 2>&1
+   sudo -u $ADMIN_USERNAME scp /opt/install-openmpi.sh $ADMIN_USERNAME@$worker:/tmp/install-openmpi.sh >> /tmp/azuredeploy.log.$$ 2>&1
 
    echo "Remote execute on $worker" >> /tmp/azuredeploy.log.$$ 2>&1
    sudo -u $ADMIN_USERNAME ssh $ADMIN_USERNAME@$worker >> /tmp/azuredeploy.log.$$ 2>&1 << 'ENDSSH1'
@@ -123,6 +130,7 @@ do
       sudo chown slurm /etc/slurm-llnl/slurm.conf
       sudo slurmd
       sudo /tmp/install-singularity.sh
+      sudo /tmp/install-openmpi.sh
 ENDSSH1
 
    i=`expr $i + 1`
