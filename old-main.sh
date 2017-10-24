@@ -66,7 +66,7 @@ done
 # Install the package
 sudo apt-get update >> /tmp/azuredeploy.log.$$ 2>&1
 sudo chmod g-w /var/log >> /tmp/azuredeploy.log.$$ 2>&1 # Must do this before munge will generate key
-sudo apt-get install build-essential slurm-llnl openmpi-bin=1.10.2-8ubuntu1 -y >> /tmp/azuredeploy.log.$$ 2>&1
+sudo apt-get install build-essential slurm-llnl -y >> /tmp/azuredeploy.log.$$ 2>&1
 
 # Download slurm.conf and fill in the node info
 SLURMCONF=/tmp/slurm.conf.$$
@@ -86,6 +86,12 @@ wget $TEMPLATE_BASE/install-singularity.sh
 sudo chmod +x install-singularity.sh
 ./install-singularity.sh
 sudo mv install-singularity.sh /opt/
+
+#install openmpi
+wget $TEMPLATE_BASE/install-openmpi.sh
+sudo chmod +x install-openmpi.sh
+./install-openmpi.sh
+sudo mv install-openmpi.sh /opt/
 
 # Install slurm on all nodes by running apt-get
 # Also push munge key and slurm.conf to them
@@ -107,13 +113,14 @@ do
    sudo -u $ADMIN_USERNAME scp $SLURMCONF $ADMIN_USERNAME@$worker:/tmp/slurm.conf >> /tmp/azuredeploy.log.$$ 2>&1
    sudo -u $ADMIN_USERNAME scp /tmp/hosts.$$ $ADMIN_USERNAME@$worker:/tmp/hosts >> /tmp/azuredeploy.log.$$ 2>&1
    sudo -u $ADMIN_USERNAME scp /opt/install-singularity.sh $ADMIN_USERNAME@$worker:/tmp/install-singularity.sh >> /tmp/azuredeploy.log.$$ 2>&1
+   sudo -u $ADMIN_USERNAME scp /opt/install-openmpi.sh $ADMIN_USERNAME@$worker:/tmp/install-openmpi.sh >> /tmp/azuredeploy.log.$$ 2>&1
 
    echo "Remote execute on $worker" >> /tmp/azuredeploy.log.$$ 2>&1
    sudo -u $ADMIN_USERNAME ssh $ADMIN_USERNAME@$worker >> /tmp/azuredeploy.log.$$ 2>&1 << 'ENDSSH1'
       sudo sh -c "cat /tmp/hosts >> /etc/hosts"
       sudo chmod g-w /var/log
       sudo apt-get update
-      sudo apt-get install build-essential slurm-llnl openmpi-bin=1.10.2-8ubuntu1 -y
+      sudo apt-get install build-essential slurm-llnl -y
       sudo cp -f /tmp/munge.key /etc/munge/munge.key
       sudo chown munge /etc/munge/munge.key
       sudo chgrp munge /etc/munge/munge.key
@@ -123,6 +130,7 @@ do
       sudo chown slurm /etc/slurm-llnl/slurm.conf
       sudo slurmd
       sudo /tmp/install-singularity.sh
+      sudo /tmp/install-openmpi.sh
 ENDSSH1
 
    i=`expr $i + 1`
